@@ -28,7 +28,9 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug --no-daemon --stacktrace || gradle assembleDebug --no-daemon --stacktrace
+        run: |
+          chmod +x ./gradlew 2>/dev/null || true
+          gradle assembleDebug --no-daemon --warning-mode none --console=plain
 
       - name: Upload Finished APK
         uses: actions/upload-artifact@v4
