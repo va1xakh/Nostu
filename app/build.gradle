@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -21,7 +21,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.5.11'
+        kotlinCompilerExtensionVersion '1.5.14'
     }
 
     compileOptions {
@@ -31,21 +31,39 @@ android {
 
     kotlinOptions {
         jvmTarget = '17'
+        freeCompilerArgs += [
+            "-Xjvm-default=all",
+        ]
+    }
+
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += 'META-INF/gradle/incremental.annotation.processors'
+        }
+    }
+}
+
+// Force all lifecycle dependencies to 2.8.0 to eliminate runtime classpath duplicates
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.lifecycle:lifecycle-runtime:2.8.0'
+        force 'androidx.lifecycle:lifecycle-viewmodel:2.8.0'
+        force 'androidx.lifecycle:lifecycle-common:2.8.0'
     }
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.0'
-    implementation 'androidx.activity:activity-compose:1.9.0'
     implementation platform('androidx.compose:compose-bom:2024.05.00')
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.activity:activity-compose:1.9.0'
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.material3:material3'
 
     // Room Database
     implementation 'androidx.room:room-runtime:2.6.1'
     implementation 'androidx.room:room-ktx:2.6.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
 
     // JSON Parser
     implementation 'com.google.code.gson:gson:2.10.1'
